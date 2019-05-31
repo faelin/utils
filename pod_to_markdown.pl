@@ -4,12 +4,13 @@ use Pod::Markdown;
 use File::Basename;
 use open IO => ':utf8';
 
+my $suffs = qr/\.(?:md|mdown|markdown|markdn|pl|pm|pod)/;
+
 my $source = $ARGV[0] or die "Source-file argument required!";
-my $dest = $ARGV[1] // $source;
+my $dest = ($ARGV[1] // $source) =~ s/$suffs$/.md/r;
 
 while (-e $dest) {
-  $DB::single = 1;
-  my ($name, $path) = fileparse($dest => ('.md', '.mdown', '.markdown', 'markdn', '.pl', '.pm', '.pod',) );
+  my ($name, $path) = fileparse($dest => $suffs );
 	my $index = $1 if $name =~ s/\h\((\d+)\)$//;
 	$dest = "$path$name (" . ++$index . ').md';
 }
